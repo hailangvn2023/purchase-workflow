@@ -14,9 +14,10 @@ class PurchaseOrder(models.Model):
 
     @api.onchange("partner_id")
     def onchange_partner_id(self):
-        res = super().onchange_partner_id()
-        self.incoterm_id = self.partner_id.commercial_partner_id.purchase_incoterm_id
-        self.incoterm_address_id = (
-            self.partner_id.commercial_partner_id.purchase_incoterm_address_id
-        )
-        return res
+        commercial_partner = self.partner_id.commercial_partner_id
+        vals = {
+            'incoterm_id': commercial_partner.purchase_incoterm_id,
+            'incoterm_address_id':
+                commercial_partner.purchase_incoterm_address_id,
+        }
+        self.update(vals)
